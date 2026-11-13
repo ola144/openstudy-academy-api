@@ -1,0 +1,5 @@
+node_modules
+notes
+tests
+.env
+playwright.config.ts
