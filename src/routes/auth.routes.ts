@@ -7,6 +7,7 @@ import {
   getMe,
   createPassword,
   resendPasswordCreation,
+  refreshTokenController,
 } from "../controllers/authController.ts";
 import { protect } from "../middleware/auth.ts";
 import { loginRateLimiter } from "../middleware/loginRateLimiter.ts";
@@ -18,6 +19,7 @@ router.post("/login", loginRateLimiter, login);
 router.post("/logout", logout);
 router.post("/create-password", createPassword);
 router.get("/verify-email/:token", verifyEmail);
+router.post("/refresh", refreshTokenController);
 router.get("/resend-invitation/:id", protect, resendPasswordCreation);
 router.get("/me", protect, getMe);
 

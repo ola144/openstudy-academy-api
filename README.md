@@ -119,7 +119,7 @@ health check for Paystack, Brevo, or MongoDB.
 - **Base URL:** `http://localhost:7070/api/v1` for the default local setup.
 - **Content type:** Send JSON with `Content-Type: application/json` for JSON
   request bodies. The Express JSON parser is configured with a 50 MB limit.
-- **Authentication:** Protected endpoints use the `authToken` HTTP-only cookie
+- **Authentication:** Protected endpoints use the `accessToken` HTTP-only cookie
   set on login. The browser client must send credentialed requests. The JWT is
   not returned as a bearer token in the login response.
 - **Identifiers:** Resource IDs are generally MongoDB ObjectId strings.
@@ -158,7 +158,7 @@ the frontend origin is on the server's CORS allowlist.
 ## Authentication and roles
 
 The supported roles are `ADMIN`, `TEACHER`, and `STUDENT`. Protected requests
-are authenticated by verifying the JWT stored in the `authToken` cookie and
+are authenticated by verifying the JWT stored in the `accessToken` cookie and
 looking up the account. Role-restricted route modules additionally use
 authorization middleware.
 
@@ -179,7 +179,7 @@ Authentication behavior includes:
 | Method | Path                          | Access               | Description                                      |
 | ------ | ----------------------------- | -------------------- | ------------------------------------------------ |
 | `POST` | `/auth/register`              | Public               | Register an account and send email verification. |
-| `POST` | `/auth/login`                 | Public, rate-limited | Authenticate and set the `authToken` cookie.     |
+| `POST` | `/auth/login`                 | Public, rate-limited | Authenticate and set the `accessToken` cookie.   |
 | `POST` | `/auth/logout`                | Public               | Clear the authentication cookie.                 |
 | `POST` | `/auth/create-password`       | Public               | Complete password creation from a setup token.   |
 | `GET`  | `/auth/verify-email/:token`   | Public               | Verify an email address.                         |
@@ -347,7 +347,7 @@ Invoice amounts, including item amounts and discounts, are in kobo. The
 ```http
 POST /api/v1/admin/invoices
 Content-Type: application/json
-Cookie: authToken=<admin-session>
+Cookie: accessToken=<admin-session>
 ```
 
 ```json
@@ -380,7 +380,7 @@ response wrappers may vary between route groups.
 ```http
 POST /api/v1/student/payments/initialize
 Content-Type: application/json
-Cookie: authToken=<student-session>
+Cookie: accessToken=<student-session>
 ```
 
 ```json
@@ -397,7 +397,7 @@ outstanding amount. The response includes an `authorizationUrl` and a payment
 ```http
 POST /api/v1/student/payments/verify
 Content-Type: application/json
-Cookie: authToken=<student-session>
+Cookie: accessToken=<student-session>
 ```
 
 ```json
@@ -415,7 +415,7 @@ batch or invalid payroll/recipient data.
 ```http
 POST /api/v1/admin/teacher-payroll/batches
 Content-Type: application/json
-Cookie: authToken=<admin-session>
+Cookie: accessToken=<admin-session>
 ```
 
 ```json
