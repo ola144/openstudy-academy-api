@@ -182,7 +182,7 @@ add("/auth/register", "post", "Register a user", "Authentication", "Public", {
 add(
   "/auth/login",
   "post",
-  "Sign in and set the authToken cookie",
+  "Sign in and set the accessToken cookie",
   "Authentication",
   "Public",
   {
@@ -194,7 +194,7 @@ add(
 add(
   "/auth/logout",
   "post",
-  "Sign out and clear the authToken cookie",
+  "Sign out and clear the accessToken cookie",
   "Authentication",
   "Public",
   {
@@ -1390,9 +1390,13 @@ const options: swaggerJsdoc.Options = {
       title: "OpenStudy Academy E-Learning Platform API",
       version: "1.0.0",
       description:
-        "API reference for the OpenStudy Academy server. Protected endpoints authenticate with the HTTP-only authToken cookie set by POST /auth/login. Monetary amounts are in kobo unless otherwise stated.",
+        "API reference for the OpenStudy Academy server. Protected endpoints authenticate with the HTTP-only accessToken cookie set by POST /auth/login. Monetary amounts are in kobo unless otherwise stated.",
     },
     servers: [
+      {
+        url: "https://openstudy-academy-api.onrender.com/api/v1",
+        description: "Production server",
+      },
       {
         url: "http://localhost:7070/api/v1",
         description: "Development server",
@@ -1429,7 +1433,7 @@ const options: swaggerJsdoc.Options = {
         sessionCookie: {
           type: "apiKey",
           in: "cookie",
-          name: "authToken",
+          name: "accessToken",
           description:
             "HTTP-only session cookie set by POST /auth/login. Browser clients send it automatically when credentials are included.",
         },

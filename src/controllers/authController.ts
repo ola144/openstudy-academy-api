@@ -3,15 +3,18 @@ import User from "../models/User.ts";
 import * as teacherService from "../services/admin.teacher.ts";
 import { sendVerificationEmail } from "../utils/email.ts";
 import {
+  accessCookieOptions,
   generateRandomToken,
   generateToken,
   hashToken,
+  refreshCookieOptions,
   storeTokenInCookie,
 } from "../utils/token.ts";
 import {
   LOGIN_BLOCK_DURATION_MS,
   MAX_FAILED_LOGIN_ATTEMPTS,
 } from "../utils/authSecurity.ts";
+import { refreshAccessToken } from "../services/auth.service.ts";
 
 const register = async (req: Request, res: Response) => {
   try {
@@ -138,7 +141,7 @@ const login = async (req: Request, res: Response) => {
     const token = generateToken(user._id.toString());
 
     // Store the token in a cookie
-    storeTokenInCookie(res, token, "authToken");
+    storeTokenInCookie(res, token, "accessToken", accessCookieOptions);
 
     await User.findByIdAndUpdate(user._id, {
       lastLoginAt: new Date(),
@@ -166,8 +169,8 @@ const login = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
   try {
-    // Clear the authToken cookie
-    res.clearCookie("authToken", {
+    // Clear the accessToken cookie
+    res.clearCookie("accessToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -286,6 +289,45 @@ const resendPasswordCreation = async (
   }
 };
 
+const refreshTokenController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token not provided.",
+      });
+    }
+
+    const result = await refreshAccessToken(refreshToken);
+
+    storeTokenInCookie(
+      res,
+      result.refreshToken,
+      "refreshToken",
+      refreshCookieOptions,
+    );
+    storeTokenInCookie(
+      res,
+      result.accessToken,
+      "accessToken",
+      accessCookieOptions,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Token refreshed successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   register,
   login,
@@ -294,4 +336,5 @@ export {
   getMe,
   createPassword,
   resendPasswordCreation,
+  refreshTokenController,
 };

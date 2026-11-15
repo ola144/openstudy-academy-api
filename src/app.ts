@@ -35,7 +35,12 @@ import swaggerUi from "swagger-ui-express";
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:7070", "http://localhost:5173"];
+const allowedOrigins = [
+  "http://localhost:7070",
+  "http://localhost:5173",
+  "https://openstudyacademye-leaningplatform.vercel.app",
+  "https://openstudy-academy-api.onrender.com",
+];
 
 app.use(
   cors({
