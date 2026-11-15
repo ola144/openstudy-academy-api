@@ -56,9 +56,7 @@ export const getStudents = async ({
 
   const [queryStudents, total] = await Promise.all([
     User.find(filter)
-      .select(
-        "firstName lastName email classId isActive isEmailVerified createdAt profilePic",
-      )
+      .select("firstName lastName email classId isActive createdAt profilePic")
       .populate("classId", "name level")
       .sort({ createdAt: -1 })
       .skip(skip)
